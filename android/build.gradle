@@ -33,7 +33,7 @@ repositories {
 
 dependencies {
     implementation "com.facebook.react:react-native:${safeExtGet('reactNativeVersion', '+')}"
-    implementation('com.google.android.exoplayer:exoplayer:2.18.0') {
+    implementation('com.google.android.exoplayer:exoplayer:2.17.1') {
         exclude group: 'com.android.support'
     }
 
