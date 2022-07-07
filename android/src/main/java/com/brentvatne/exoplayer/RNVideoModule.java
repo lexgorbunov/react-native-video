@@ -9,6 +9,8 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeMap;
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 
@@ -43,7 +45,9 @@ public class RNVideoModule extends ReactContextBaseJavaModule {
             promise.resolve(-1);
             return;
         }
-        promise.resolve(cache.getCacheSpace());
+        WritableMap event = new WritableNativeMap();
+        event.putDouble("total", cache.getCacheSpace());
+        promise.resolve(event);
     }
 
     @ReactMethod
