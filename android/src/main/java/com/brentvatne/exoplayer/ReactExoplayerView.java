@@ -211,6 +211,10 @@ class ReactExoplayerView extends FrameLayout implements
         this.isCacheEnabled = enabled;
     }
 
+    public long getCacheTotal() {
+        return 123;
+    }
+
     private final Handler progressHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {

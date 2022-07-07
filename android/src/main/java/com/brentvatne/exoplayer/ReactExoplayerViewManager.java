@@ -458,7 +458,7 @@ public class ReactExoplayerViewManager extends ViewGroupManager<ReactExoplayerVi
                 "onCacheTotalInfo",
                 Collections.singletonMap(
                         "phasedRegistrationNames",
-                        Collections.singletonMap("bubbled", "onLocationChanged")
+                        Collections.singletonMap("bubbled", "onCacheTotalInfo")
                 )
         );
     }

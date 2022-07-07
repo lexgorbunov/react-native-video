@@ -76,7 +76,7 @@ export default class Video extends Component {
     this.setNativeProps({ fullscreen: false });
   };
 
-  save = async (options?) => {
+  save = async (options) => {
     return await NativeModules.VideoManager.save(options, findNodeHandle(this._root));
   }
 
@@ -268,11 +268,11 @@ export default class Video extends Component {
   };
 
   getCacheTotal = () => {
-    if (!this._assignRoot.current) return -1;
+    if (!this._root) {return;}
     // @ts-ignore
-    const node = findNodeHandle(this._assignRoot.current);
+    const node = findNodeHandle(this._root);
     const config = this.getViewManagerConfig('RCTVideo');
-    UIManager.dispatchViewManagerCommand(node, config.Commands.getCacheTotal);
+    UIManager.dispatchViewManagerCommand(node, config.Commands.getCacheTotal, []);
   };
 
   render() {
@@ -359,6 +359,10 @@ export default class Video extends Component {
           ref={this._assignRoot}
           {...nativeProps}
           style={StyleSheet.absoluteFill}
+          onCacheTotalInfo={(e) => {
+            if (!this.props.onCacheTotalInfo) {return;}
+            this.props.onCacheTotalInfo(e.nativeEvent);
+          }}
         />
         {this.state.showPoster && (
           <Image style={posterStyle} source={{ uri: this.props.poster }} />
