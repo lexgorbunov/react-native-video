@@ -4,7 +4,6 @@ package com.brentvatne.exoplayer;
 import android.content.Context;
 import android.util.Log;
 
-import com.brentvatne.react.R;
 import com.facebook.react.bridge.ReactContext;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -12,30 +11,23 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.FileDataSource;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSink;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
-import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
-import com.google.android.exoplayer2.upstream.cache.NoOpCacheEvictor;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
-import com.google.android.exoplayer2.util.Util;
 
-import java.io.File;
 import java.util.Map;
 
 class AndroidCacheDataSourceFactory implements DataSource.Factory {
     private final Context context;
     private final DefaultDataSourceFactory defaultDatasourceFactory;
-    private final long maxFileSize, maxCacheSize;
-    private static SimpleCache simpleCache;
+    private final long maxFileSize;
 
     AndroidCacheDataSourceFactory(
             ReactContext context,
-            long maxCacheSize,
             long maxFileSize,
             DefaultBandwidthMeter bandwidthMeter,
             Map<String, String> requestHeaders
     ) {
         super();
         this.context = context;
-        this.maxCacheSize = maxCacheSize;
         this.maxFileSize = maxFileSize;
 //        String userAgent = Util.getUserAgent(context, "Looky");
         defaultDatasourceFactory = new DefaultDataSourceFactory(this.context,
@@ -45,11 +37,7 @@ class AndroidCacheDataSourceFactory implements DataSource.Factory {
 
 
     public SimpleCache getInstance(Context context) {
-        LeastRecentlyUsedCacheEvictor evictor = new LeastRecentlyUsedCacheEvictor(maxCacheSize);
-
-        if (simpleCache == null)
-            simpleCache = new SimpleCache(new File(context.getCacheDir(), "exoCache"), evictor);
-        return simpleCache;
+        return RNVideoModule.getCacheInstance(context);
     }
 
     @Override

@@ -212,7 +212,7 @@ class ReactExoplayerView extends FrameLayout implements
     }
 
     public long getCacheTotal() {
-        return 123;
+        return RNVideoModule.cache.getCacheSpace();
     }
 
     private final Handler progressHandler = new Handler(Looper.getMainLooper()) {
@@ -739,7 +739,6 @@ class ReactExoplayerView extends FrameLayout implements
                 return new ProgressiveMediaSource.Factory(
                         new AndroidCacheDataSourceFactory(
                                 themedReactContext,
-                                300 * 1024 * 1024,
                                 5 * 1024 * 1024,
                                 bandwidthMeter,
                                 requestHeaders
