@@ -205,6 +205,12 @@ class ReactExoplayerView extends FrameLayout implements
     private final AudioManager audioManager;
     private final AudioBecomingNoisyReceiver audioBecomingNoisyReceiver;
 
+    private boolean isCacheEnabled = false;
+
+    public void setCacheEnabled(boolean enabled) {
+        this.isCacheEnabled = enabled;
+    }
+
     private final Handler progressHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {

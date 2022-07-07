@@ -90,6 +90,11 @@ public class ReactExoplayerViewManager extends ViewGroupManager<ReactExoplayerVi
         return REACT_CLASS;
     }
 
+    @ReactProp(name = "cacheEnabled", defaultBoolean = false)
+    public void setCacheEnabled(final ReactExoplayerView videoView, final boolean cacheEnabled) {
+        videoView.setCacheEnabled(cacheEnabled);
+    }
+
     @Override
     protected ReactExoplayerView createViewInstance(ThemedReactContext themedReactContext) {
         return new ReactExoplayerView(themedReactContext, config);
