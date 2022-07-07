@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import PropTypes, {number} from 'prop-types';
 import { StyleSheet, requireNativeComponent, NativeModules, UIManager, View, Image, Platform, findNodeHandle } from 'react-native';
 import { ViewPropTypes, ImagePropTypes } from 'deprecated-react-native-prop-types';
 import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
@@ -267,6 +267,14 @@ export default class Video extends Component {
     return UIManager.getViewManagerConfig(viewManagerName);
   };
 
+  getCacheTotal = () => {
+    if (!this._assignRoot.current) return -1;
+    // @ts-ignore
+    const node = findNodeHandle(this._assignRoot.current);
+    const config = this.getViewManagerConfig('RCTVideo');
+    UIManager.dispatchViewManagerCommand(node, config.Commands.getCacheTotal);
+  };
+
   render() {
     const resizeMode = this.props.resizeMode;
     const source = resolveAssetSource(this.props.source) || {};
@@ -361,6 +369,8 @@ export default class Video extends Component {
 }
 
 Video.propTypes = {
+  cacheEnabled: PropTypes.bool,
+  onCacheTotalInfo: PropTypes.func,
   filter: PropTypes.oneOf([
     FilterType.NONE,
     FilterType.INVERT,

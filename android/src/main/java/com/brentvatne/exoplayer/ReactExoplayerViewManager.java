@@ -1,16 +1,22 @@
 package com.brentvatne.exoplayer;
-
+import com.facebook.react.uimanager.events.EventDispatcher;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.facebook.react.bridge.Dynamic;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.ThemedReactContext;
+import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.bridge.ReactMethod;
@@ -18,6 +24,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.upstream.RawResourceDataSource;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Map;
@@ -90,6 +97,8 @@ public class ReactExoplayerViewManager extends ViewGroupManager<ReactExoplayerVi
         return REACT_CLASS;
     }
 
+    private EventDispatcher eventDispatcher;
+
     @ReactProp(name = "cacheEnabled", defaultBoolean = false)
     public void setCacheEnabled(final ReactExoplayerView videoView, final boolean cacheEnabled) {
         videoView.setCacheEnabled(cacheEnabled);
@@ -97,6 +106,9 @@ public class ReactExoplayerViewManager extends ViewGroupManager<ReactExoplayerVi
 
     @Override
     protected ReactExoplayerView createViewInstance(ThemedReactContext themedReactContext) {
+        UIManagerModule nativeModule = themedReactContext.getNativeModule(UIManagerModule.class);
+        assert nativeModule != null;
+        this.eventDispatcher = nativeModule.getEventDispatcher();
         return new ReactExoplayerView(themedReactContext, config);
     }
 
@@ -106,7 +118,8 @@ public class ReactExoplayerViewManager extends ViewGroupManager<ReactExoplayerVi
     }
 
     @Override
-    public @Nullable Map<String, Object> getExportedCustomDirectEventTypeConstants() {
+    public @Nullable
+    Map<String, Object> getExportedCustomDirectEventTypeConstants() {
         MapBuilder.Builder<String, Object> builder = MapBuilder.builder();
         for (String event : VideoEventEmitter.Events) {
             builder.put(event, MapBuilder.of("registrationName", event));
@@ -115,7 +128,8 @@ public class ReactExoplayerViewManager extends ViewGroupManager<ReactExoplayerVi
     }
 
     @Override
-    public @Nullable Map<String, Object> getExportedViewConstants() {
+    public @Nullable
+    Map<String, Object> getExportedViewConstants() {
         return MapBuilder.<String, Object>of(
                 "ScaleNone", Integer.toString(ResizeMode.RESIZE_MODE_FIT),
                 "ScaleAspectFit", Integer.toString(ResizeMode.RESIZE_MODE_FIT),
@@ -169,15 +183,15 @@ public class ReactExoplayerViewManager extends ViewGroupManager<ReactExoplayerVi
             }
         } else {
             int identifier = context.getResources().getIdentifier(
-                uriString,
-                "drawable",
-                context.getPackageName()
+                    uriString,
+                    "drawable",
+                    context.getPackageName()
             );
             if (identifier == 0) {
                 identifier = context.getResources().getIdentifier(
-                    uriString,
-                    "raw",
-                    context.getPackageName()
+                        uriString,
+                        "raw",
+                        context.getPackageName()
                 );
             }
             if (identifier > 0) {
@@ -206,7 +220,7 @@ public class ReactExoplayerViewManager extends ViewGroupManager<ReactExoplayerVi
 
     @ReactProp(name = PROP_SELECTED_VIDEO_TRACK)
     public void setSelectedVideoTrack(final ReactExoplayerView videoView,
-                                     @Nullable ReadableMap selectedVideoTrack) {
+                                      @Nullable ReadableMap selectedVideoTrack) {
         String typeString = null;
         Dynamic value = null;
         if (selectedVideoTrack != null) {
@@ -220,7 +234,7 @@ public class ReactExoplayerViewManager extends ViewGroupManager<ReactExoplayerVi
 
     @ReactProp(name = PROP_SELECTED_AUDIO_TRACK)
     public void setSelectedAudioTrack(final ReactExoplayerView videoView,
-                                     @Nullable ReadableMap selectedAudioTrack) {
+                                      @Nullable ReadableMap selectedAudioTrack) {
         String typeString = null;
         Dynamic value = null;
         if (selectedAudioTrack != null) {
@@ -389,7 +403,8 @@ public class ReactExoplayerViewManager extends ViewGroupManager<ReactExoplayerVi
                 || uriString.startsWith("asset://");
     }
 
-    private @ResizeMode.Mode int convertToIntDef(String resizeModeOrdinalString) {
+    private @ResizeMode.Mode
+    int convertToIntDef(String resizeModeOrdinalString) {
         if (!TextUtils.isEmpty(resizeModeOrdinalString)) {
             int resizeModeOrdinal = Integer.parseInt(resizeModeOrdinalString);
             return ResizeMode.toResizeMode(resizeModeOrdinal);
@@ -419,5 +434,44 @@ public class ReactExoplayerViewManager extends ViewGroupManager<ReactExoplayerVi
         }
 
         return result;
+    }
+
+    @androidx.annotation.Nullable
+    @Override
+    public Map<String, Integer> getCommandsMap() {
+        Map<String, Integer> commands = new HashMap<>();
+        commands.put("getCacheTotal", 11);
+        return commands;
+    }
+
+    @Override
+    public void receiveCommand(@NonNull ReactExoplayerView root, int commandId, @androidx.annotation.Nullable ReadableArray args) {
+        if (commandId == 11) {
+            sendCacheTotal(root);
+        }
+    }
+
+    @androidx.annotation.Nullable
+    @Override
+    public Map<String, Object> getExportedCustomBubblingEventTypeConstants() {
+        return Collections.singletonMap(
+                "onCacheTotalInfo",
+                Collections.singletonMap(
+                        "phasedRegistrationNames",
+                        Collections.singletonMap("bubbled", "onLocationChanged")
+                )
+        );
+    }
+
+    @Override
+    public void receiveCommand(@NonNull ReactExoplayerView root, String commandId, @androidx.annotation.Nullable ReadableArray args) {
+        if (commandId.equals("getCacheTotal")) {
+            sendCacheTotal(root);
+        }
+    }
+
+    private void sendCacheTotal(@NonNull ReactExoplayerView root) {
+        long total = root.getCacheTotal();
+        eventDispatcher.dispatchEvent(new CacheTotalSendEvent(root.getId(), total));
     }
 }
