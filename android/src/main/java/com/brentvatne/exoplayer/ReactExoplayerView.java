@@ -737,12 +737,13 @@ class ReactExoplayerView extends FrameLayout implements
                         ).createMediaSource(mediaItem);
             case C.TYPE_OTHER:
                 return new ProgressiveMediaSource.Factory(
-                        new AndroidCacheDataSourceFactory(
-                                themedReactContext,
-                                5 * 1024 * 1024,
-                                bandwidthMeter,
-                                requestHeaders
-                        )
+                        isCacheEnabled ?
+                                new AndroidCacheDataSourceFactory(
+                                        themedReactContext,
+                                        5 * 1024 * 1024,
+                                        bandwidthMeter,
+                                        requestHeaders
+                                ) : mediaDataSourceFactory
                 ).setDrmSessionManagerProvider(drmProvider)
                         .setLoadErrorHandlingPolicy(
                                 config.buildLoadErrorHandlingPolicy(minLoadRetryCount)
