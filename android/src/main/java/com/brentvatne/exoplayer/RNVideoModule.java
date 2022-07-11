@@ -17,7 +17,8 @@ import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import java.io.File;
 
 public class RNVideoModule extends ReactContextBaseJavaModule {
-    static final int MAX_CACHE_SIZE = 300 * 1024 * 1024;
+    static final int Gb = 1024 * 1024;
+    static final int MAX_CACHE_SIZE = 1024 * Gb;
 
     @Nullable
     public static SimpleCache cache = null;
