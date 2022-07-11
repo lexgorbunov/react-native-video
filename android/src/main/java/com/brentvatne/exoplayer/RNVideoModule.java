@@ -1,6 +1,7 @@
 package com.brentvatne.exoplayer;
 
 import android.content.Context;
+import android.os.FileUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,11 +23,14 @@ public class RNVideoModule extends ReactContextBaseJavaModule {
 
     @Nullable
     public static SimpleCache cache = null;
+    public static File file = null;
 
     public static SimpleCache getCacheInstance(Context context) {
         LeastRecentlyUsedCacheEvictor evictor = new LeastRecentlyUsedCacheEvictor(MAX_CACHE_SIZE);
-        if (cache == null)
-            cache = new SimpleCache(new File(context.getCacheDir(), "exoCache"), evictor);
+        if (cache == null) {
+            file = new File(context.getCacheDir(), "exoCache");
+            cache = new SimpleCache(file, evictor);
+        }
         return cache;
     }
 
@@ -55,6 +59,19 @@ public class RNVideoModule extends ReactContextBaseJavaModule {
     void releaseCache() {
         if (cache == null) return;
         cache.release();
+        deleteDir(file);
+
+        file = null;
         cache = null;
+    }
+
+    private void deleteDir(File file) {
+        File[] contents = file.listFiles();
+        if (contents != null) {
+            for (File f : contents) {
+                deleteDir(f);
+            }
+        }
+        file.delete();
     }
 }
