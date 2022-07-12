@@ -1,5 +1,7 @@
 package com.brentvatne.react;
 
+import android.view.LayoutInflater;
+
 import com.brentvatne.react.ReactVideoView.Events;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableMap;
@@ -13,6 +15,7 @@ import com.yqritc.scalablevideoview.ScalableType;
 
 import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.zip.Inflater;
 
 public class ReactVideoViewManager extends SimpleViewManager<ReactVideoView> {
 
@@ -45,15 +48,21 @@ public class ReactVideoViewManager extends SimpleViewManager<ReactVideoView> {
         return REACT_CLASS;
     }
 
+    public static int instCount = 0;
+
     @Override
     protected ReactVideoView createViewInstance(ThemedReactContext themedReactContext) {
-        return new ReactVideoView(themedReactContext);
+        instCount++;
+        System.out.println("\uD83D\uDEE5 MPLAYER COUNT: " + instCount + "(+)");
+        return (ReactVideoView) LayoutInflater.from(themedReactContext).inflate(R.layout.player, null, false);
     }
 
     @Override
     public void onDropViewInstance(ReactVideoView view) {
         super.onDropViewInstance(view);
         view.cleanupMediaPlayerResources();
+        instCount--;
+        System.out.println("\uD83D\uDEE5 MPLAYER COUNT: " + instCount + " (-)");
     }
 
     @Override
@@ -101,7 +110,7 @@ public class ReactVideoViewManager extends SimpleViewManager<ReactVideoView> {
                     src.getBoolean(PROP_SRC_IS_NETWORK),
                     src.getBoolean(PROP_SRC_IS_ASSET),
                     src.getMap(PROP_SRC_HEADERS)
-                    );
+            );
         }
     }
 
