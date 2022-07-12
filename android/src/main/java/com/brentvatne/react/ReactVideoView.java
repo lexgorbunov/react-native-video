@@ -3,6 +3,7 @@ package com.brentvatne.react;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Matrix;
 import android.media.MediaPlayer;
@@ -10,6 +11,7 @@ import android.media.TimedMetaData;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.WindowManager;
@@ -44,14 +46,14 @@ import javax.annotation.Nullable;
 
 @SuppressLint("ViewConstructor")
 public class ReactVideoView extends ScalableVideoView implements
-    MediaPlayer.OnPreparedListener,
-    MediaPlayer.OnErrorListener,
-    MediaPlayer.OnBufferingUpdateListener,
-    MediaPlayer.OnSeekCompleteListener,
-    MediaPlayer.OnCompletionListener,
-    MediaPlayer.OnInfoListener,
-    LifecycleEventListener,
-    MediaController.MediaPlayerControl {
+        MediaPlayer.OnPreparedListener,
+        MediaPlayer.OnErrorListener,
+        MediaPlayer.OnBufferingUpdateListener,
+        MediaPlayer.OnSeekCompleteListener,
+        MediaPlayer.OnCompletionListener,
+        MediaPlayer.OnInfoListener,
+        LifecycleEventListener,
+        MediaController.MediaPlayerControl {
 
     public enum Events {
         EVENT_LOAD_START("onVideoLoadStart"),
@@ -324,15 +326,15 @@ public class ReactVideoView extends ScalableVideoView implements
                 }
                 if(fd==null) {
                     int identifier = mThemedReactContext.getResources().getIdentifier(
-                        uriString,
-                        "drawable",
-                        mThemedReactContext.getPackageName()
+                            uriString,
+                            "drawable",
+                            mThemedReactContext.getPackageName()
                     );
                     if (identifier == 0) {
                         identifier = mThemedReactContext.getResources().getIdentifier(
-                            uriString,
-                            "raw",
-                            mThemedReactContext.getPackageName()
+                                uriString,
+                                "raw",
+                                mThemedReactContext.getPackageName()
                         );
                     }
                     setRawData(identifier);
@@ -367,9 +369,9 @@ public class ReactVideoView extends ScalableVideoView implements
         isCompleted = false;
 
         try {
-          prepareAsync(this);
+            prepareAsync(this);
         } catch (Exception e) {
-          e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -406,7 +408,7 @@ public class ReactVideoView extends ScalableVideoView implements
             if (!mMediaPlayer.isPlaying()) {
                 start();
                 // Setting the rate unpauses, so we have to wait for an unpause
-                if (mRate != mActiveRate) { 
+                if (mRate != mActiveRate) {
                     setRateModifier(mRate);
                 }
 
@@ -681,7 +683,7 @@ public class ReactVideoView extends ScalableVideoView implements
             setKeepScreenOn(false);
         }
     }
-        
+
     // This is not fully tested and does not work for all forms of timed metadata
     @TargetApi(23) // 6.0
     public class TimedMetaDataAvailableListener
@@ -781,7 +783,7 @@ public class ReactVideoView extends ScalableVideoView implements
 
         return result;
     }
-        
+
     // Select track (so we can use it to listen to timed meta data updates)
     private void selectTimedMetadataTrack(MediaPlayer mp) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
