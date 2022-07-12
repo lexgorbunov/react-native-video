@@ -144,6 +144,10 @@ public class ReactVideoView extends ScalableVideoView implements
     private boolean isCompleted = false;
     private boolean mUseNativeControls = false;
 
+    public ReactVideoView(Context context, AttributeSet attrs) {
+        this((ThemedReactContext) context);
+    }
+
     public ReactVideoView(ThemedReactContext themedReactContext) {
         super(themedReactContext);
 
