@@ -207,9 +207,13 @@ public class ReactVideoView extends ScalableVideoView implements
         }
     }
 
+    public static int instCount = 0;
+
     private void initializeMediaPlayerIfNeeded() {
         if (mMediaPlayer == null) {
             mMediaPlayerValid = false;
+            instCount++;
+            System.out.println("\uD83D\uDEE5 MPLAYER COUNT: " + instCount);
             mMediaPlayer = new MediaPlayer();
             mMediaPlayer.setOnVideoSizeChangedListener(this);
             mMediaPlayer.setOnErrorListener(this);
@@ -240,6 +244,8 @@ public class ReactVideoView extends ScalableVideoView implements
             }
             mMediaPlayerValid = false;
             release();
+            instCount--;
+            System.out.println("\uD83D\uDEE5 MPLAYER COUNT: " + instCount + ' (-)');
         }
         if (mIsFullscreen) {
             setFullscreen(false);
